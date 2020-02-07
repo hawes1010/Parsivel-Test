@@ -10,11 +10,15 @@
 #define HWSERIAL Serial1
 String Parsivel_ID;
 String intensity;
-String rain_size;
-String rain_attribute_0;
-String rain_attribute_1;
-String rain_attribute_2;
-String rain_attribute_3;
+String rain_amount;
+String weather_code;
+String radar_reflectivity;
+String mor_visibility;
+String kinetic_energy;
+String housing_temp;
+String laser_signal;
+String num_valid_particles;
+String sensor_status;
 int command_num = 0;
 int array_size;
 //#include <array>
@@ -47,6 +51,7 @@ void loop() {
         command_num = 0;
         data_pointer = 0;
         clearArray(arr);
+        clearStrings();
         continue;
       }
       if (c == 0x3B){ //semicolon that separates out the values from parsivel
@@ -73,8 +78,34 @@ String convertToString(char* a, int size)
     } 
     return s; 
 } 
+void clearStrings(){
+String Parsivel_ID = "" ;
+String intensity = "" ;
+String rain_amount = "" ;
+String weather_code = "" ;
+String radar_reflectivity = "" ;
+String mor_visibility = "" ;
+String kinetic_energy = "" ;
+String housing_temp = "" ;
+String laser_signal = "" ;
+String num_valid_particles = "" ;
+String sensor_status = "" ;
+}
 
-
+/*
+ * 
+ * String Parsivel_ID;
+ * String intensity;
+ * String rain_amount;
+ * String weather_code;
+ * String radar_reflectivity;
+ * String mor_visibility;
+ * String kinetic_energy;
+ * String housing_temp;
+ * String laser_signal;
+ * String num_valid_particles;
+ * String sensor_status;
+ */
 void parseMessage(String a, int comm){
    switch(comm){
     case 0: 
@@ -86,23 +117,42 @@ void parseMessage(String a, int comm){
     break;
 
     case 2:
-    rain_size = a;
+    rain_amount = a;
     break;
 
     case 3:
-    rain_attribute_0 = a;
+    weather_code = a;
     break;
 
     case 4:
-    rain_attribute_1 = a;
+    radar_reflectivity = a;
     break;
 
     case 5:
-    rain_attribute_2 = a;
+    mor_visibility = a;
     break;
 
-    default:
-    //save the data: SD card?  
+    case 6:
+    kinetic_energy = a;
+    break;
+
+     case 7:
+    housing_temp = a;
+    break;
+
+     case 8:
+    laser_signal = a;
+    break;
+    
+     case 9:
+    num_valid_particles = a;
+    break;
+
+     case 10:
+    sensor_status = a;
+    break;
+    
+    default: 
     break;
    }
 }
