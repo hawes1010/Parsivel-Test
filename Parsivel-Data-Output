@@ -1,0 +1,18 @@
+Parsivel Serial Output (no power yet)
+
+436873;0000.000;0000.00;00;-9.999;20000;0000.00;021;00002;00000;3;
+
+Data divided by Semicolons
+1. Sensor Serial number (relatively unimportant for now)
+2. Rain Intensity 
+3. Rain amount since device start
+4. Weather code according to SYNOP
+5. Radar Reflectivity
+6. MOR visibility
+7. Kinetic Energy
+8. Temperature of Sensor Housing
+9. Signal amplitude of laser strip
+10.Number of particles detected and validated
+11. Sensor Status
+
+What else is needed? 
