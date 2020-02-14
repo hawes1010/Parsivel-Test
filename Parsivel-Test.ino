@@ -8,12 +8,10 @@
 
 // set this to the hardware serial port you wish to use
 #define HWSERIAL Serial1
-String Parsivel_ID;
+String datetime;
 String intensity;
 String rain_amount;
 String weather_code;
-String radar_reflectivity;
-String mor_visibility;
 String kinetic_energy;
 String housing_temp;
 String laser_signal;
@@ -60,7 +58,7 @@ void loop() {
         clearStrings();
         continue;
       }
-      if (c == 0x3B){ //semicolon that separates out the values from parsivel
+      if (c == 0x2C || c == 0xD){ //comma that separates out the values from parsivel or return character
        data_pointer = 0;
        String datastring = convertToString(arr, array_size);
        parseMessage(datastring, command_num);
@@ -79,23 +77,22 @@ String convertToString(char* a, int size)
 { 
     int i; 
     String s = ""; 
+    if (a[0] != NULL)
     for (i = 0; i < size; i++) { 
         s = s + a[i]; 
     } 
     return s; 
 } 
 void clearStrings(){
-String Parsivel_ID = "" ;
-String intensity = "" ;
-String rain_amount = "" ;
-String weather_code = "" ;
-String radar_reflectivity = "" ;
-String mor_visibility = "" ;
-String kinetic_energy = "" ;
-String housing_temp = "" ;
-String laser_signal = "" ;
-String num_valid_particles = "" ;
-String sensor_status = "" ;
+datetime = "" ;
+intensity = "" ;
+rain_amount = "" ;
+weather_code = "" ;
+kinetic_energy = "" ;
+housing_temp = "" ;
+laser_signal = "" ;
+num_valid_particles = "" ;
+sensor_status = "" ;
 }
 
 char monthChar[5];
@@ -151,7 +148,7 @@ void saveData() {
 
 void setfileName()
 {
-  int y = sprintf(fileName, "%s%s%i%s", monthChar, dateChar, year(), ".txt");
+  int y = sprintf(fileName, "%s%s%s%i%s", "Parsivel_data-", monthChar, dateChar, year(), ".txt");
   Serial.print("Filename is: "); Serial.println(fileName);
 }
 
@@ -209,9 +206,12 @@ void buildDateTime()
 
 
 void parseMessage(String a, int comm){
+  //"CS/M/S/%19,/%01,/%02,/%60,/%34,/%18,/%93/r/n"
+  // date/time, intensity, rain accumulated, particles detected, 
+  // kinetic energy,sensor status, weather data, and raw data (in this order)
    switch(comm){
     case 0: 
-    Parsivel_ID = a;
+    datetime = a;
     break;
     
     case 1:
@@ -223,43 +223,54 @@ void parseMessage(String a, int comm){
     break;
 
     case 3:
-    weather_code = a;
+     kinetic_energy = a;
     break;
 
     case 4:
-    radar_reflectivity = a;
+    sensor_status = a;
     break;
 
     case 5:
-    mor_visibility = a;
+    
     break;
 
     case 6:
-    kinetic_energy = a;
+  
     break;
 
      case 7:
-    housing_temp = a;
+   
     break;
 
      case 8:
-    laser_signal = a;
+    
     break;
     
      case 9:
-    num_valid_particles = a;
+    
     break;
 
      case 10:
-    sensor_status = a;
+   
     break;
     
     default: 
+    Serial.println ("Something happened that shouldn't have");
     break;
    }
 }
 
-time_t getTeensy3Time()
+void sendMessage() { // Tells the Parsivel through serial message how we want to get the telegram data from it
+  //refer to OneDrive in Parsivel2-->Terminal Commands Pdf.
+  String interval = "60"; // This is how often we want to receive data from the parsivel
+  
+  String request_data = "CS/M/S/%19,/%01,/%02,/%60,/%34,/%18,/%93/r/n";// this asks for date/time, intensity, rain accumulated, particles detected, 
+  // kinetic energy, and raw data (in this order)
+  String interval_send = "CS/I/"+interval;
+  String enable_msg = "CS/M/M/1";
+}
+
+time_t getTeensy3Time()  // this uses the time library to return an RTC time to the compiler
 {
   return Teensy3Clock.get();
 }
